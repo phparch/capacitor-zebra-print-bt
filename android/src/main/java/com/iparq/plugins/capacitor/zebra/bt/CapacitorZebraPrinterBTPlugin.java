@@ -13,7 +13,6 @@ import com.getcapacitor.annotation.PermissionCallback;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
-// import android.content.Context;
 
 import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
@@ -23,19 +22,9 @@ import com.zebra.sdk.printer.PrinterStatus;
 import com.zebra.sdk.printer.ZebraPrinterFactory;
 import com.zebra.sdk.printer.ZebraPrinterLanguageUnknownException;
 
-// import com.zebra.sdk.printer.discovery.BluetoothDiscoverer;
-// import com.zebra.sdk.printer.discovery.DiscoveredPrinter;
-// import com.zebra.sdk.printer.discovery.DiscoveredPrinterBluetooth;
-// import com.zebra.sdk.printer.discovery.DiscoveryHandler;
-
 import org.json.JSONArray;
 
 import java.util.Iterator;
-
-// import java.util.LinkedList;
-// import java.util.List;
-
-// import java.util.Map;
 import java.util.Set;
 
 @CapacitorPlugin(
@@ -55,7 +44,6 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
     private Connection printerConnection;
     private com.zebra.sdk.printer.ZebraPrinter printer;
     private String macAddress;
-    static final String lock = "ZebraPluginLock";
 
     private CapacitorZebraPrinterBT implementation = new CapacitorZebraPrinterBT();
 
@@ -239,66 +227,6 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
             e.printStackTrace();
         }
     }
-
-    // //This doesn't seem to return any printers
-    // private void discoverWithZebraSDK(final PluginCall call) {
-    //     class BTDiscoveryHandler implements DiscoveryHandler {
-    //         List<JSObject> printers = new LinkedList<JSObject>();
-    //         PluginCall call;
-
-    //         public BTDiscoveryHandler(PluginCall call) {
-    //             this.call = call;
-    //         }
-
-    //         public void discoveryError(String message) {
-    //             call.error(message);
-    //         }
-
-    //         public void discoveryFinished() {
-    //             JSObject ret = new JSObject();
-    //             ret.put("printers", printers);
-    //             call.resolve(ret);
-    //         }
-
-    //         @Override
-    //         public void foundPrinter(DiscoveredPrinter printer) {
-    //             DiscoveredPrinterBluetooth pr = (DiscoveredPrinterBluetooth) printer;
-    //             try
-    //             {
-    //                 Map<String,String> map = pr.getDiscoveryDataMap();
-
-    //                 for (String settingsKey : map.keySet()) {
-    //                     System.out.println("Key: " + settingsKey + " Value: " + printer.getDiscoveryDataMap().get(settingsKey));
-    //                 }
-
-    //                 String name = pr.friendlyName;
-    //                 String mac = pr.address;
-    //                 JSObject p = new JSObject();
-    //                 p.put("name",name);
-    //                 p.put("address", mac);
-    //                 for (String settingsKey : map.keySet()) {
-    //                     System.out.println("Key: " + settingsKey + " Value: " + map.get(settingsKey));
-    //                     p.put(settingsKey,map.get(settingsKey));
-    //                 }
-
-    //                 printers.add(p);
-    //             } catch (Exception e) {
-    //                 Log.v("EMO", "Discovery Error - Error...", e);
-    //             }
-    //         }
-    //     }
-
-    //     final Context context = this.getContext();
-    //     new Thread(new Runnable() {
-    //         public void run() {
-    //             try {
-    //                 BluetoothDiscoverer.findPrinters(context, new BTDiscoveryHandler(call));
-    //             } catch (Exception e) {
-    //                 call.error(e.getMessage());
-    //             }
-    //         }
-    //     }).start();
-    // }
 
     private JSArray NonZebraDiscovery(){
         JSArray printers = new JSArray();
