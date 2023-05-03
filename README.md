@@ -1,6 +1,7 @@
 # capacitor-zebra-print-bt
 
-Capacitor plugin for Zebra bluetooth printers
+Capacitor plugin for Zebra bluetooth printers.  This currently only works on Android.  Will accept pull requests for iOS.
+Learned and borrowed from https://github.com/cleversolutions/zebraCapacitor but updated to work with Capacitor 4.
 
 ## Install
 
