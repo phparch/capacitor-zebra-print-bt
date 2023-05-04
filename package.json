@@ -17,10 +17,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iParqDevelopers/capacitor-zebra-print-bt.git.git"
+    "url": "git+https://github.com/phparch/capacitor-zebra-print-bt.git.git"
   },
   "bugs": {
-    "url": "https://github.com/iParqDevelopers/capacitor-zebra-print-bt.git/issues"
+    "url": "https://github.com/phparch/capacitor-zebra-print-bt.git/issues"
   },
   "keywords": [
     "capacitor",
