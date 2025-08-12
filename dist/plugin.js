@@ -7,10 +7,7 @@ var capacitorCapacitorZebraPrinterBT = (function (exports, core) {
 
     class CapacitorZebraPrinterBTWeb extends core.WebPlugin {
         constructor() {
-            super({
-                name: 'ZebraCapacitorPlugin',
-                platforms: ['web'],
-            });
+            super();
             this.printers = [
                 {
                     name: 'Test Printer 1',
@@ -105,8 +102,6 @@ var capacitorCapacitorZebraPrinterBT = (function (exports, core) {
     });
 
     exports.CapacitorZebraPrinterBT = CapacitorZebraPrinterBT;
-
-    Object.defineProperty(exports, '__esModule', { value: true });
 
     return exports;
 

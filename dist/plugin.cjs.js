@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var core = require('@capacitor/core');
 
 const CapacitorZebraPrinterBT = core.registerPlugin('CapacitorZebraPrinterBT', {
@@ -10,10 +8,7 @@ const CapacitorZebraPrinterBT = core.registerPlugin('CapacitorZebraPrinterBT', {
 
 class CapacitorZebraPrinterBTWeb extends core.WebPlugin {
     constructor() {
-        super({
-            name: 'ZebraCapacitorPlugin',
-            platforms: ['web'],
-        });
+        super();
         this.printers = [
             {
                 name: 'Test Printer 1',

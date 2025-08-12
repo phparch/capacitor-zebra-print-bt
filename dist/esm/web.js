@@ -1,10 +1,7 @@
 import { WebPlugin } from '@capacitor/core';
 export class CapacitorZebraPrinterBTWeb extends WebPlugin {
     constructor() {
-        super({
-            name: 'ZebraCapacitorPlugin',
-            platforms: ['web'],
-        });
+        super();
         this.printers = [
             {
                 name: 'Test Printer 1',

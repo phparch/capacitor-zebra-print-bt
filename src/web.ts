@@ -22,10 +22,7 @@ export class CapacitorZebraPrinterBTWeb extends WebPlugin implements CapacitorZe
   private connectedPrinter: any = null;
 
   constructor() {
-    super({
-      name: 'ZebraCapacitorPlugin',
-      platforms: ['web'],
-    });
+    super();
   }
 
   async echo(options: { value: string }): Promise<{ value: string }> {
