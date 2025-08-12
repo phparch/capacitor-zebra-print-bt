@@ -60,7 +60,7 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
     public void print(PluginCall call) {
         String message = call.getString("cpcl");
         if (!isConnected()) {
-            call.error("Printer Not Connected");
+            call.reject("Printer Not Connected");
         } else {
             if (this.printCPCL(message)) {
                 call.resolve();
