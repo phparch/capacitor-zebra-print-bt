@@ -27,6 +27,9 @@ import org.json.JSONArray;
 import java.util.Iterator;
 import java.util.Set;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @CapacitorPlugin(
     name = "CapacitorZebraPrinterBT",
     permissions = {
@@ -42,6 +45,8 @@ import java.util.Set;
 )
 public class CapacitorZebraPrinterBTPlugin extends Plugin {
     private Connection printerConnection;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
     private com.zebra.sdk.printer.ZebraPrinter printer;
     private String macAddress;
 
@@ -58,16 +63,21 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
 
     @PluginMethod()
     public void print(PluginCall call) {
-        String message = call.getString("cpcl");
-        if (!isConnected()) {
-            call.reject("Printer Not Connected");
-        } else {
-            if (this.printCPCL(message)) {
-                call.resolve();
-            } else {
-                call.reject("Print error");
+        final String message = call.getString("cpcl");
+        executor.execute(() -> {
+            if (!isConnected()) {
+                getActivity().runOnUiThread(() -> call.reject("Printer Not Connected"));
+                return;
             }
-        }
+            boolean ok = this.printCPCL(message);
+            getActivity().runOnUiThread(() -> {
+                if (ok) {
+                    call.resolve();
+                } else {
+                    call.reject("Print error");
+                }
+            });
+        });
     }
 
     @PluginMethod()
@@ -82,11 +92,13 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
         if (getPermissionState("bluetooth") != PermissionState.GRANTED) {
             requestAllPermissions(call, "bluetoothConnectPermissionCallback");
         } else {
-            String address = call.getString("MACAddress");
-            com.zebra.sdk.printer.ZebraPrinter printer = this.connect(address);
-            JSObject ret = new JSObject();
-            ret.put("success", printer != null);
-            call.resolve(ret);
+            final String address = call.getString("MACAddress");
+            executor.execute(() -> {
+                com.zebra.sdk.printer.ZebraPrinter printer = this.connect(address);
+                JSObject ret = new JSObject();
+                ret.put("success", printer != null);
+                getActivity().runOnUiThread(() -> call.resolve(ret));
+            });
         }
     }
 
@@ -101,35 +113,39 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
 
     @PluginMethod()
     public void printerStatus(PluginCall call){
-        String address = call.getString("MACAddress");
-        JSObject ret = new JSObject();
-        if(this.macAddress == macAddress && this.isConnected()){
-            try{
-                PrinterStatus status = printer.getCurrentStatus();
-                ret.put("isReadyToPrint", status.isReadyToPrint);
-                ret.put("isPaused", status.isPaused);
-                ret.put("isReceiveBufferFull", status.isReceiveBufferFull);
-                ret.put("isRibbonOut", status.isRibbonOut);
-                ret.put("isPaperOut", status.isPaperOut);
-                ret.put("isHeadTooHot", status.isHeadTooHot);
-                ret.put("isHeadOpen", status.isHeadOpen);
-                ret.put("isHeadCold", status.isHeadCold);
-                ret.put("isPartialFormatInProgress", status.isPartialFormatInProgress);
-            }catch(Exception ex){
-                call.errorCallback(ex.getMessage());
+        final String address = call.getString("MACAddress");
+        executor.execute(() -> {
+            JSObject ret = new JSObject();
+            boolean ok = address != null && address.equals(this.macAddress) && this.isConnected();
+            if(ok){
+                try{
+                    PrinterStatus status = printer.getCurrentStatus();
+                    ret.put("isReadyToPrint", status.isReadyToPrint);
+                    ret.put("isPaused", status.isPaused);
+                    ret.put("isReceiveBufferFull", status.isReceiveBufferFull);
+                    ret.put("isRibbonOut", status.isRibbonOut);
+                    ret.put("isPaperOut", status.isPaperOut);
+                    ret.put("isHeadTooHot", status.isHeadTooHot);
+                    ret.put("isHeadOpen", status.isHeadOpen);
+                    ret.put("isHeadCold", status.isHeadCold);
+                    ret.put("isPartialFormatInProgress", status.isPartialFormatInProgress);
+                }catch(Exception ex){
+                    getActivity().runOnUiThread(() -> call.errorCallback(ex.getMessage()));
+                }
+                ret.put("connected", true);
+            }else{
+                ret.put("connected", false);
             }
-            ret.put("connected", true);
-        }else{
-            ret.put("connected", false);
-        }
-        call.resolve(ret);
+            getActivity().runOnUiThread(() -> call.resolve(ret));
+        });
     }
 
     @PluginMethod()
     public void disconnect(PluginCall call) {
-        disconnect();
-
-        call.resolve();
+        executor.execute(() -> {
+            disconnect();
+            getActivity().runOnUiThread(call::resolve);
+        });
     }
 
     @PluginMethod()
@@ -137,10 +153,12 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
         if (getPermissionState("bluetooth") != PermissionState.GRANTED) {
             requestAllPermissions(call, "bluetoothDiscoverPermissionCallback");
         } else {
-            JSArray printers = this.NonZebraDiscovery();
-            JSObject ret = new JSObject();
-            ret.put("printers", printers);
-            call.resolve(ret);
+            executor.execute(() -> {
+                JSArray printers = this.NonZebraDiscovery();
+                JSObject ret = new JSObject();
+                ret.put("printers", printers);
+                getActivity().runOnUiThread(() -> call.resolve(ret));
+            });
         }
     }
 
