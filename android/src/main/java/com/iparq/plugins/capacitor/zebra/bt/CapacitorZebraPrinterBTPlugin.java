@@ -60,7 +60,7 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
     public void print(PluginCall call) {
         String message = call.getString("cpcl");
         if (!isConnected()) {
-            call.error("Printer Not Connected");
+            call.reject("Printer Not Connected");
         } else {
             if (this.printCPCL(message)) {
                 call.resolve();
@@ -116,7 +116,7 @@ public class CapacitorZebraPrinterBTPlugin extends Plugin {
                 ret.put("isHeadCold", status.isHeadCold);
                 ret.put("isPartialFormatInProgress", status.isPartialFormatInProgress);
             }catch(Exception ex){
-                call.errorCallback(ex.getMessage());
+                call.reject(ex.getMessage());
             }
             ret.put("connected", true);
         }else{
